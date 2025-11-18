@@ -1,21 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CoffeeController" prefWidth="600" prefHeight="550">
 
     <top>
-        <Label text="Coffee"
-               style="-fx-font-size:28px;
-                      -fx-font-weight:bold;
-                      -fx-padding:14;
-                      -fx-background-color:black;
-                      -fx-text-fill:white;"/>
+        <HBox spacing="20" style="-fx-background-color: #c45a5a; -fx-padding: 20;">
+            <padding>
+                <Insets left="40" right="40"/>
+            </padding>
+            <Label text="Coffee" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <ImageView fitWidth="180" fitHeight="120" preserveRatio="true">
+                <image>
+                    <Image url="@coffee.jpg"/>
+                </image>
+            </ImageView>
+        </HBox>
     </top>
 
     <center>
-        <Label text="Coffee screen TODO" style="-fx-font-size:16px;"/>
+        <VBox spacing="20" style="-fx-background-color: #dbb89f; -fx-padding: 40;">
+
+            <HBox spacing="40" alignment="CENTER_LEFT">
+                <CheckBox fx:id="cbSweetCream" text="Sweet Cream" style="-fx-font-size: 14px;"/>
+                <CheckBox fx:id="cbMocha" text="Mocha" style="-fx-font-size: 14px;"/>
+                <VBox spacing="5">
+                    <Label text="Cup Size:" style="-fx-font-size: 12px;"/>
+                    <ComboBox fx:id="cupSizeCombo" prefWidth="150"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="40" alignment="CENTER_LEFT">
+                <CheckBox fx:id="cbFrenchVanilla" text="French Vanilla" style="-fx-font-size: 14px;"/>
+                <CheckBox fx:id="cbCaramel" text="Caramel" style="-fx-font-size: 14px;"/>
+                <VBox spacing="5">
+                    <Label text="Quantity:" style="-fx-font-size: 12px;"/>
+                    <ComboBox fx:id="quantityCombo" prefWidth="150"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="40" alignment="CENTER_LEFT">
+                <CheckBox fx:id="cbIrishCream" text="Irish Cream" style="-fx-font-size: 14px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="priceField" text="0.00" editable="false" prefWidth="150" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            </HBox>
+
+            <HBox spacing="20" alignment="CENTER" style="-fx-padding: 40 0 0 0;">
+                <Button fx:id="btnAddToOrder" text="add to order" prefWidth="200" style="-fx-background-color: #e8e8e8; -fx-font-size: 14px;"/>
+            </HBox>
+
+        </VBox>
     </center>
+
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-background-color: #dbb89f; -fx-padding: 10;">
+            <Button fx:id="btnMainMenu" text="Main Menu" prefWidth="200" style="-fx-background-color: #e89090; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        </HBox>
+    </bottom>
 
 </BorderPane>

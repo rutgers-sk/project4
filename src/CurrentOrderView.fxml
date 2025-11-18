@@ -1,21 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CurrentOrderController" prefWidth="600" prefHeight="500">
 
     <top>
-        <Label text="Current Order"
-               style="-fx-font-size:28px;
-                      -fx-font-weight:bold;
-                      -fx-padding:14;
-                      -fx-background-color:black;
-                      -fx-text-fill:white;"/>
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #e8ed6b; -fx-padding: 20;">
+            <padding>
+                <Insets left="40" right="40"/>
+            </padding>
+
+            <Label text="Order" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #4a90e2;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <GridPane hgap="10" vgap="8">
+                <Label text="sub-total" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextField fx:id="subtotalField" text="0.00" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="100" style="-fx-font-size: 13px;"/>
+
+                <Label text="sales tax" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextField fx:id="salesTaxField" text="0.00" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="100" style="-fx-font-size: 13px;"/>
+
+                <Label text="total" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <TextField fx:id="totalField" text="0.00" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="100" style="-fx-font-size: 13px;"/>
+            </GridPane>
+        </HBox>
     </top>
 
     <center>
-        <Label text="Current order TODO" style="-fx-font-size:16px;"/>
+        <VBox style="-fx-background-color: #e8ed6b; -fx-padding: 20;">
+            <ListView fx:id="orderItemsListView" prefHeight="300" style="-fx-font-size: 13px;"/>
+        </VBox>
     </center>
+
+    <bottom>
+        <HBox spacing="20" alignment="CENTER" style="-fx-background-color: #e8ed6b; -fx-padding: 20;">
+            <Button fx:id="btnRemoveSelected" text="Remove Selected" prefWidth="150" style="-fx-background-color: #b3e5fc; -fx-font-size: 14px;"/>
+            <Button fx:id="btnPlaceOrder" text="Place Order" prefWidth="150" style="-fx-background-color: #b3e5fc; -fx-font-size: 14px;"/>
+            <Button fx:id="btnMainMenu" text="Main Menu" prefWidth="150" style="-fx-background-color: #f4f76b; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+        </HBox>
+    </bottom>
 
 </BorderPane>

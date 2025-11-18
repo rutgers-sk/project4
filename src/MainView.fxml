@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
@@ -5,7 +6,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="MainController"
             prefWidth="1000" prefHeight="700"
             stylesheets="@style.css">
@@ -57,7 +59,8 @@
             <!-- SANDWICHES -->
             <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0"
                        onMouseClicked="#openSandwich"
-                       styleClass="block">
+                       styleClass="block"
+                       style="-fx-cursor: hand;">
                 <padding>
                     <Insets top="24" right="24" bottom="24" left="24"/>
                 </padding>

@@ -1,21 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DonutController" prefWidth="800" prefHeight="550">
 
     <top>
-        <Label text="Donuts"
-               style="-fx-font-size:28px;
-                      -fx-font-weight:bold;
-                      -fx-padding:14;
-                      -fx-background-color:black;
-                      -fx-text-fill:white;"/>s
+        <Label text="Ordering Donuts" BorderPane.alignment="CENTER" style="-fx-font-size:32px; -fx-font-weight:bold; -fx-padding:14; -fx-background-color:#f2e7b5; -fx-text-fill:#8a7a2b; -fx-alignment:center;"/>
     </top>
 
     <center>
-        <Label text="Donut screen TODO" style="-fx-font-size:16px;"/>
+        <GridPane hgap="20" vgap="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <columnConstraints>
+                <ColumnConstraints percentWidth="35"/>
+                <ColumnConstraints percentWidth="20"/>
+                <ColumnConstraints percentWidth="45"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="35"/>
+                <RowConstraints percentHeight="65"/>
+            </rowConstraints>
+
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="8">
+                <Label text="Donut type:" style="-fx-font-size:14px;"/>
+                <ComboBox fx:id="typeBox" prefWidth="220"/>
+            </VBox>
+
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" alignment="CENTER">
+                <ImageView fx:id="donutImage" fitWidth="220" fitHeight="150" preserveRatio="true">
+                    <image>
+                        <Image url="@donut.jpg"/>
+                    </image>
+                </ImageView>
+            </VBox>
+
+            <ListView fx:id="flavorList" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="230" prefHeight="220"/>
+
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" spacing="10">
+                <Spinner fx:id="qtySpinner" prefWidth="80" editable="false"/>
+                <Button fx:id="btnAddOne" text=">" prefWidth="80"/>
+                <Button fx:id="btnAddAll" text=">>" prefWidth="80"/>
+                <Button fx:id="btnRemove" text="&lt;&lt;" prefWidth="80"/>
+            </VBox>
+
+            <ListView fx:id="selectedList" GridPane.columnIndex="2" GridPane.rowIndex="1" prefWidth="260" prefHeight="220"/>
+
+        </GridPane>
     </center>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Label text="sub-total:"/>
+            <TextField fx:id="subTotalField" text="0.00" prefWidth="100" editable="false"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="btnAddToOrder" text="add to order" prefWidth="130" style="-fx-background-color:#d1b74b; -fx-text-fill:white; -fx-font-weight:bold;"/>
+
+            <Button fx:id="btnMainMenu" text="Main Menu" prefWidth="130" style="-fx-background-color:#c1c1c1; -fx-font-weight:bold;"/>
+
+        </HBox>
+    </bottom>
 
 </BorderPane>
