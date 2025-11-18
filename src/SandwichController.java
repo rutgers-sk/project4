@@ -1,5 +1,8 @@
-/*
-@author Yao Sheng Huang
+/**
+ * Controller for the Sandwich ordering view.
+ * Handles sandwich customization including bread, protein, and add-on selections.
+ *
+ * @author Yao Sheng Huang
  */
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
+import rucafe.*;
 
 public class SandwichController {
 
@@ -20,16 +24,18 @@ public class SandwichController {
     private ToggleGroup breadGroup;
     private ToggleGroup proteinGroup;
 
-    // Price constants
     private static final double BEEF_PRICE = 12.99;
     private static final double CHICKEN_PRICE = 10.99;
     private static final double SALMON_PRICE = 14.99;
     private static final double CHEESE_PRICE = 1.00;
     private static final double VEGGIE_PRICE = 0.30;
 
+    /**
+     * Initialize the controller after FXML is loaded.
+     * Sets up toggle groups, combo boxes, listeners, and initial price display.
+     */
     @FXML
     public void initialize() {
-        // Create toggle groups programmatically
         breadGroup = new ToggleGroup();
         rbBagel.setToggleGroup(breadGroup);
         rbWheatBread.setToggleGroup(breadGroup);
@@ -40,13 +46,11 @@ public class SandwichController {
         rbSalmon.setToggleGroup(proteinGroup);
         rbChicken.setToggleGroup(proteinGroup);
 
-        // Set up quantity combo box (1-10)
         for (int i = 1; i <= 10; i++) {
             quantityCombo.getItems().add(i);
         }
         quantityCombo.setValue(1);
 
-        // Add listeners to all controls for dynamic price update
         rbBagel.setOnAction(e -> updatePrice());
         rbWheatBread.setOnAction(e -> updatePrice());
         rbSourdough.setOnAction(e -> updatePrice());
@@ -62,18 +66,19 @@ public class SandwichController {
 
         quantityCombo.setOnAction(e -> updatePrice());
 
-        // Set up button actions
         btnAddToOrder.setOnAction(e -> handleAddToOrder());
         btnMainMenu.setOnAction(e -> handleMainMenu());
 
-        // Initial price calculation
         updatePrice();
     }
 
+    /**
+     * Calculate and update the price based on current selections.
+     * Price is calculated as (base price + add-ons) * quantity.
+     */
     private void updatePrice() {
         double basePrice = 0.0;
 
-        // Get protein price
         if (rbBeef.isSelected()) {
             basePrice = BEEF_PRICE;
         } else if (rbChicken.isSelected()) {
@@ -82,45 +87,58 @@ public class SandwichController {
             basePrice = SALMON_PRICE;
         }
 
-        // Add add-ons
         double addOnPrice = 0.0;
         if (cbLettuce.isSelected()) addOnPrice += VEGGIE_PRICE;
         if (cbTomato.isSelected()) addOnPrice += VEGGIE_PRICE;
         if (cbOnion.isSelected()) addOnPrice += VEGGIE_PRICE;
         if (cbCheese.isSelected()) addOnPrice += CHEESE_PRICE;
 
-        // Calculate total with quantity
         int quantity = quantityCombo.getValue();
         double total = (basePrice + addOnPrice) * quantity;
 
-        // Update price field
         priceField.setText(String.format("$%.2f", total));
     }
 
+    /**
+     * Handle the Add to Order button click.
+     * Creates a Sandwich object with selected options and adds it to the current order.
+     */
     @FXML
     private void handleAddToOrder() {
-        String bread = "";
-        if (rbBagel.isSelected()) bread = "Bagel";
-        else if (rbWheatBread.isSelected()) bread = "Wheat Bread";
-        else if (rbSourdough.isSelected()) bread = "Sourdough";
+        Bread bread = null;
+        if (rbBagel.isSelected()) bread = Bread.BAGEL;
+        else if (rbWheatBread.isSelected()) bread = Bread.WHEAT;
+        else if (rbSourdough.isSelected()) bread = Bread.SOURDOUGH;
 
-        String protein = "";
-        if (rbBeef.isSelected()) protein = "Beef";
-        else if (rbChicken.isSelected()) protein = "Chicken";
-        else if (rbSalmon.isSelected()) protein = "Salmon";
+        Protein protein = null;
+        if (rbBeef.isSelected()) protein = Protein.BEEF;
+        else if (rbChicken.isSelected()) protein = Protein.CHICKEN;
+        else if (rbSalmon.isSelected()) protein = Protein.SALMON;
 
-        if (bread.isEmpty() || protein.isEmpty()) {
+        if (bread == null || protein == null) {
             showAlert("Please select both bread and protein!");
             return;
         }
 
-        showAlert("Sandwich added to order!\nBread: " + bread +
-                "\nProtein: " + protein +
-                "\nPrice: " + priceField.getText());
+        int quantity = quantityCombo.getValue();
+        Sandwich sandwich = new Sandwich(bread, protein, quantity);
+
+        if (cbLettuce.isSelected()) sandwich.add(SandwichExtra.LETTUCE);
+        if (cbTomato.isSelected()) sandwich.add(SandwichExtra.TOMATOES);
+        if (cbOnion.isSelected()) sandwich.add(SandwichExtra.ONIONS);
+        if (cbCheese.isSelected()) sandwich.add(SandwichExtra.CHEESE);
+
+        DataManager.getInstance().getCurrentOrder().add(sandwich);
+
+        showAlert("Sandwich added to order!\n" + sandwich.toString() +
+                "\nPrice: $" + String.format("%.2f", sandwich.price()));
 
         resetForm();
     }
 
+    /**
+     * Navigate back to main menu.
+     */
     @FXML
     private void handleMainMenu() {
         try {
@@ -135,6 +153,9 @@ public class SandwichController {
         }
     }
 
+    /**
+     * Reset form to default selections.
+     */
     private void resetForm() {
         rbWheatBread.setSelected(true);
         rbSalmon.setSelected(true);
@@ -146,6 +167,11 @@ public class SandwichController {
         updatePrice();
     }
 
+    /**
+     * Show alert dialog.
+     *
+     * @param message the message to display
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sandwich Order");

@@ -1,6 +1,6 @@
 /*
 @author Yao Sheng Huang
-*/
+ */
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -10,105 +10,75 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import rucafe.MenuItem;
+import rucafe.Order;
+import rucafe.StoreOrders;
+import rucafe.DataManager;
 
 public class StoreOrdersController {
 
-    @FXML private ComboBox<String> orderNumberCombo;
-    @FXML private TextField totalAmountField;
-    @FXML private ListView<String> orderDetailsListView;
-    @FXML private Button btnCancelOrder, btnExportOrders, btnMainMenu;
-
-    // TODO: Replace with Person A's StoreOrders class
-    // This is a mock implementation for testing
-    private List<MockOrder> allOrders = new ArrayList<>();
-
-    /**
-     * Mock Order class for testing (replace with Person A's Order class)
-     */
-    private static class MockOrder {
-        int orderNumber;
-        double total;
-        List<String> items;
-
-        MockOrder(int orderNumber, double total, List<String> items) {
-            this.orderNumber = orderNumber;
-            this.total = total;
-            this.items = items;
-        }
-    }
+    @FXML private ComboBox<String> comboBox;
+    @FXML private TextField total;
+    @FXML private ListView<String> listView;
+    @FXML private Button cancel, export, back;
 
     /**
      * Initialize the controller after FXML is loaded
      */
     @FXML
     public void initialize() {
-        // Load orders from Person A's StoreOrders class
         loadOrders();
+        comboBox.setOnAction(e -> displaySelectedOrder());
+        cancel.setOnAction(e -> handleCancelOrder());
+        export.setOnAction(e -> handleExportOrders());
+        back.setOnAction(e -> handleMainMenu());
 
-        // Set up order number combo box listener
-        orderNumberCombo.setOnAction(e -> displaySelectedOrder());
-
-        // Set up button actions
-        btnCancelOrder.setOnAction(e -> handleCancelOrder());
-        btnExportOrders.setOnAction(e -> handleExportOrders());
-        btnMainMenu.setOnAction(e -> handleMainMenu());
-
-        // Display first order if available
-        if (!orderNumberCombo.getItems().isEmpty()) {
-            orderNumberCombo.setValue(orderNumberCombo.getItems().get(0));
+        if (!comboBox.getItems().isEmpty()) {
+            comboBox.setValue(comboBox.getItems().get(0));
             displaySelectedOrder();
         }
     }
 
     /**
      * Load all orders from StoreOrders
-     * TODO: Replace with Person A's implementation
      */
     private void loadOrders() {
-        // Mock data for testing - Replace with Person A's StoreOrders.getAllOrders()
-        allOrders.add(new MockOrder(1, 6.37, List.of("sugar(1)", "glazed(2)")));
-        allOrders.add(new MockOrder(2, 15.59, List.of("Salmon Sandwich (Wheat Bread, Lettuce, Tomato) x1")));
-        allOrders.add(new MockOrder(3, 2.99, List.of("Tall Coffee (no add-ins) x1")));
-
-        // Populate order number combo box
+        StoreOrders storeOrders = DataManager.getInstance().getStoreOrders();
         ObservableList<String> orderNumbers = FXCollections.observableArrayList();
-        for (MockOrder order : allOrders) {
-            orderNumbers.add(String.valueOf(order.orderNumber));
+        for (Order order : storeOrders.getOrders()) {
+            orderNumbers.add(String.valueOf(order.getOrderNumber()));
         }
-        orderNumberCombo.setItems(orderNumbers);
+        comboBox.setItems(orderNumbers);
     }
 
     /**
      * Display the selected order's details
      */
     private void displaySelectedOrder() {
-        String selectedOrderNum = orderNumberCombo.getValue();
-        if (selectedOrderNum == null) return;
+        String s = comboBox.getValue();
+        if (s == null) return;
 
-        int orderNum = Integer.parseInt(selectedOrderNum);
+        int orderNum = Integer.parseInt(s);
+        StoreOrders storeOrders = DataManager.getInstance().getStoreOrders();
 
-        // Find the order
-        MockOrder selectedOrder = null;
-        for (MockOrder order : allOrders) {
-            if (order.orderNumber == orderNum) {
+        Order selectedOrder = null;
+        for (Order order : storeOrders.getOrders()) {
+            if (order.getOrderNumber() == orderNum) {
                 selectedOrder = order;
                 break;
             }
         }
 
         if (selectedOrder != null) {
-            // Display total amount
-            totalAmountField.setText(String.format("%.2f", selectedOrder.total));
+            total.setText(String.format("%.2f", selectedOrder.getTotal()));
 
-            // Display order items
-            ObservableList<String> items = FXCollections.observableArrayList(selectedOrder.items);
-            orderDetailsListView.setItems(items);
+            ObservableList<String> items = FXCollections.observableArrayList();
+            for (MenuItem item : selectedOrder.getItems()) {
+                items.add(item.toString());
+            }
+            listView.setItems(items);
         }
     }
 
@@ -117,36 +87,41 @@ public class StoreOrdersController {
      */
     @FXML
     private void handleCancelOrder() {
-        String selectedOrderNum = orderNumberCombo.getValue();
-        if (selectedOrderNum == null) {
+        String s = comboBox.getValue();
+        if (s == null) {
             showAlert("Please select an order to cancel!");
             return;
         }
 
-        // Confirm cancellation
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Cancel Order");
         confirmation.setHeaderText("Are you sure you want to cancel this order?");
-        confirmation.setContentText("Order #" + selectedOrderNum);
+        confirmation.setContentText("Order #" + s);
 
         if (confirmation.showAndWait().get() == ButtonType.OK) {
-            int orderNum = Integer.parseInt(selectedOrderNum);
+            int orderNum = Integer.parseInt(s);
+            StoreOrders storeOrders = DataManager.getInstance().getStoreOrders();
 
-            // Remove from list
-            allOrders.removeIf(order -> order.orderNumber == orderNum);
+            Order toRemove = null;
+            for (Order order : storeOrders.getOrders()) {
+                if (order.getOrderNumber() == orderNum) {
+                    toRemove = order;
+                    break;
+                }
+            }
 
-            // TODO: Remove from Person A's StoreOrders class
-            // StoreOrders.removeOrder(orderNum);
+            if (toRemove != null) {
+                storeOrders.remove(toRemove);
+            }
 
-            // Refresh display
             loadOrders();
 
-            if (!orderNumberCombo.getItems().isEmpty()) {
-                orderNumberCombo.setValue(orderNumberCombo.getItems().get(0));
+            if (!comboBox.getItems().isEmpty()) {
+                comboBox.setValue(comboBox.getItems().get(0));
                 displaySelectedOrder();
             } else {
-                totalAmountField.setText("0.00");
-                orderDetailsListView.getItems().clear();
+                total.setText("0.00");
+                listView.getItems().clear();
             }
 
             showAlert("Order #" + orderNum + " has been cancelled.");
@@ -158,12 +133,13 @@ public class StoreOrdersController {
      */
     @FXML
     private void handleExportOrders() {
-        if (allOrders.isEmpty()) {
+        StoreOrders storeOrders = DataManager.getInstance().getStoreOrders();
+
+        if (storeOrders.getOrders().isEmpty()) {
             showAlert("No orders to export!");
             return;
         }
 
-        // Open file chooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Orders");
         fileChooser.setInitialFileName("orders.txt");
@@ -171,31 +147,14 @@ public class StoreOrdersController {
                 new FileChooser.ExtensionFilter("Text Files", "*.txt")
         );
 
-        File file = fileChooser.showSaveDialog(btnExportOrders.getScene().getWindow());
+        File file = fileChooser.showSaveDialog(export.getScene().getWindow());
 
         if (file != null) {
             try {
-                exportOrdersToFile(file);
+                storeOrders.exportToFile(file);
                 showAlert("Orders exported successfully to:\n" + file.getAbsolutePath());
             } catch (IOException e) {
                 showAlert("Error exporting orders:\n" + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Export all orders to a text file
-     */
-    private void exportOrdersToFile(File file) throws IOException {
-        try (FileWriter writer = new FileWriter(file)) {
-            for (MockOrder order : allOrders) {
-                writer.write("Order #" + order.orderNumber + "\n");
-                writer.write("Total: $" + String.format("%.2f", order.total) + "\n");
-                writer.write("Items:\n");
-                for (String item : order.items) {
-                    writer.write("  - " + item + "\n");
-                }
-                writer.write("\n");
             }
         }
     }
@@ -208,7 +167,7 @@ public class StoreOrdersController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MainView.fxml"));
             Parent root = loader.load();
-            Stage stage = (Stage) btnMainMenu.getScene().getWindow();
+            Stage stage = (Stage) back.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("RU Cafe - Main Menu");
         } catch (Exception e) {
@@ -219,6 +178,8 @@ public class StoreOrdersController {
 
     /**
      * Show alert dialog
+     *
+     * @param message the message to display
      */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

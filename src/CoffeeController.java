@@ -1,5 +1,8 @@
-/*
-@author Yao Sheng Huang
+/**
+ * Controller for the Coffee ordering view.
+ * Handles coffee customization including size selection and add-ins.
+ *
+ * @author Yao Sheng Huang
  */
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
+import rucafe.*;
 
 public class CoffeeController {
 
@@ -16,27 +20,20 @@ public class CoffeeController {
     @FXML private TextField priceField;
     @FXML private Button btnAddToOrder, btnMainMenu;
 
-    // Price constants
     private static final double SHORT_PRICE = 2.39;
     private static final double SIZE_INCREMENT = 0.60;
     private static final double ADDIN_PRICE = 0.25;
 
     /**
-     * Initialize the controller after FXML is loaded
+     * Initialize the controller after FXML is loaded.
+     * Sets up combo boxes, listeners, and initial price display.
      */
     @FXML
     public void initialize() {
-        // Set up cup size combo box
         cupSizeCombo.getItems().addAll("Short", "Tall", "Grande", "Venti");
         cupSizeCombo.setValue("Short");
-
-        // Set up quantity combo box (1-10)
-        for (int i = 1; i <= 10; i++) {
-            quantityCombo.getItems().add(i);
-        }
+        for (int i = 1; i <= 10; i++) quantityCombo.getItems().add(i);
         quantityCombo.setValue(1);
-
-        // Add listeners for dynamic price update
         cbSweetCream.setOnAction(e -> updatePrice());
         cbMocha.setOnAction(e -> updatePrice());
         cbFrenchVanilla.setOnAction(e -> updatePrice());
@@ -44,20 +41,16 @@ public class CoffeeController {
         cbIrishCream.setOnAction(e -> updatePrice());
         cupSizeCombo.setOnAction(e -> updatePrice());
         quantityCombo.setOnAction(e -> updatePrice());
-
-        // Set up button actions
         btnAddToOrder.setOnAction(e -> handleAddToOrder());
         btnMainMenu.setOnAction(e -> handleMainMenu());
-
-        // Initial price calculation
         updatePrice();
     }
 
     /**
-     * Calculate and update the price based on current selections
+     * Calculate and update the price based on current selections.
+     * Price is calculated as (base price + add-ins) * quantity.
      */
     private void updatePrice() {
-        // Get base price based on cup size
         double basePrice = SHORT_PRICE;
         String size = cupSizeCombo.getValue();
 
@@ -68,8 +61,6 @@ public class CoffeeController {
         } else if (size.equals("Venti")) {
             basePrice += SIZE_INCREMENT * 3;
         }
-
-        // Add price for add-ins
         int addInCount = 0;
         if (cbSweetCream.isSelected()) addInCount++;
         if (cbMocha.isSelected()) addInCount++;
@@ -78,49 +69,43 @@ public class CoffeeController {
         if (cbIrishCream.isSelected()) addInCount++;
 
         double addInTotal = addInCount * ADDIN_PRICE;
-
-        // Calculate total with quantity
         int quantity = quantityCombo.getValue();
         double total = (basePrice + addInTotal) * quantity;
-
-        // Update price field
         priceField.setText(String.format("%.2f", total));
     }
 
     /**
-     * Handle the Add to Order button click
+     * Handle the Add to Order button click.
+     * Creates a Coffee object with selected options and adds it to the current order.
      */
     @FXML
     private void handleAddToOrder() {
-        String size = cupSizeCombo.getValue();
+        CupSize size = null;
+        String sizeStr = cupSizeCombo.getValue();
+        if (sizeStr.equals("Short")) size = CupSize.SHORT;
+        else if (sizeStr.equals("Tall")) size = CupSize.TALL;
+        else if (sizeStr.equals("Grande")) size = CupSize.GRANDE;
+        else if (sizeStr.equals("Venti")) size = CupSize.VENTI;
+
         int quantity = quantityCombo.getValue();
+        Coffee coffee = new Coffee(size, quantity);
 
-        // Build add-ins list
-        StringBuilder addIns = new StringBuilder();
-        if (cbSweetCream.isSelected()) addIns.append("Sweet Cream, ");
-        if (cbMocha.isSelected()) addIns.append("Mocha, ");
-        if (cbFrenchVanilla.isSelected()) addIns.append("French Vanilla, ");
-        if (cbCaramel.isSelected()) addIns.append("Caramel, ");
-        if (cbIrishCream.isSelected()) addIns.append("Irish Cream, ");
+        if (cbSweetCream.isSelected()) coffee.add(CoffeeAddIn.WHIPPED_CREAM);
+        if (cbMocha.isSelected()) coffee.add(CoffeeAddIn.MOCHA);
+        if (cbFrenchVanilla.isSelected()) coffee.add(CoffeeAddIn.VANILLA);
+        if (cbCaramel.isSelected()) coffee.add(CoffeeAddIn.CARAMEL);
+        if (cbIrishCream.isSelected()) coffee.add(CoffeeAddIn.TWO_PERCENT_MILK);
 
-        String addInsList = addIns.length() > 0 ?
-                addIns.substring(0, addIns.length() - 2) : "None";
+        DataManager.getInstance().getCurrentOrder().add(coffee);
 
-        // TODO: Create Coffee object and add to Order
-        // This will depend on Person A's implementation
+        showAlert("Coffee added to order!\n" + coffee.toString() +
+                "\nPrice: $" + String.format("%.2f", coffee.price()));
 
-        showAlert("Coffee added to order!\n" +
-                "Size: " + size + "\n" +
-                "Add-ins: " + addInsList + "\n" +
-                "Quantity: " + quantity + "\n" +
-                "Price: $" + priceField.getText());
-
-        // Reset form
         resetForm();
     }
 
     /**
-     * Navigate back to main menu
+     * Navigate back to main menu.
      */
     @FXML
     private void handleMainMenu() {
@@ -137,7 +122,7 @@ public class CoffeeController {
     }
 
     /**
-     * Reset form to default selections
+     * Reset form to default selections.
      */
     private void resetForm() {
         cbSweetCream.setSelected(false);
@@ -151,7 +136,9 @@ public class CoffeeController {
     }
 
     /**
-     * Show alert dialog
+     * Show alert dialog.
+     *
+     * @param message the message to display
      */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

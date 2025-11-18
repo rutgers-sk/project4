@@ -6,9 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.List;
+import rucafe.*;
+import rucafe.MenuItem;
+import rucafe.Order;
+import rucafe.StoreOrders;
+import rucafe.DataManager;
 
 public class CurrentOrderController {
 
@@ -18,69 +20,50 @@ public class CurrentOrderController {
     @FXML private TextField totalField;
     @FXML private Button btnRemoveSelected, btnPlaceOrder, btnMainMenu;
 
-    // Tax rate for New Jersey
-    private static final double TAX_RATE = 0.06625;
-
-    // TODO: Replace with Person A's Order class
-    // Mock current order items for testing
-    private ObservableList<String> currentOrderItems = FXCollections.observableArrayList();
-
-    // Mock prices for items (in real implementation, get from Order objects)
-    private List<Double> itemPrices = new ArrayList<>();
+    private ObservableList<String> orderItemsDisplay = FXCollections.observableArrayList();
 
     /**
      * Initialize the controller after FXML is loaded
      */
     @FXML
     public void initialize() {
-        // Load current order from Person A's Order class
-        loadCurrentOrder();
-
         // Set up ListView
-        orderItemsListView.setItems(currentOrderItems);
+        orderItemsListView.setItems(orderItemsDisplay);
 
         // Set up button actions
         btnRemoveSelected.setOnAction(e -> handleRemoveSelected());
         btnPlaceOrder.setOnAction(e -> handlePlaceOrder());
         btnMainMenu.setOnAction(e -> handleMainMenu());
 
-        // Update totals
-        updateTotals();
+        // Load current order
+        refreshOrder();
     }
 
     /**
-     * Load the current order from Person A's Order class
-     * TODO: Replace with actual Order implementation
+     * Refresh the order display from DataManager
      */
-    private void loadCurrentOrder() {
-        // Mock data for testing - Replace with Person A's Order.getItems()
-        currentOrderItems.add("sugar(1)");
-        currentOrderItems.add("glazed(2)");
-        currentOrderItems.add("strawberry frosted(3)");
+    private void refreshOrder() {
+        orderItemsDisplay.clear();
 
-        // Mock prices - Replace with actual item.price() calls
-        itemPrices.add(1.99);  // sugar x1
-        itemPrices.add(3.98);  // glazed x2
-        itemPrices.add(5.97);  // strawberry frosted x3
+        Order currentOrder = DataManager.getInstance().getCurrentOrder();
+
+        for (MenuItem item : currentOrder.getItems()) {
+            orderItemsDisplay.add(item.toString());
+        }
+
+        updateTotals();
     }
 
     /**
      * Update subtotal, sales tax, and total fields
      */
     private void updateTotals() {
-        // Calculate subtotal
-        double subtotal = 0.0;
-        for (double price : itemPrices) {
-            subtotal += price;
-        }
+        Order currentOrder = DataManager.getInstance().getCurrentOrder();
 
-        // Calculate sales tax
-        double salesTax = subtotal * TAX_RATE;
+        double subtotal = currentOrder.getSubtotal();
+        double salesTax = currentOrder.getTax();
+        double total = currentOrder.getTotal();
 
-        // Calculate total
-        double total = subtotal + salesTax;
-
-        // Update text fields
         subtotalField.setText(String.format("%.2f", subtotal));
         salesTaxField.setText(String.format("%.2f", salesTax));
         totalField.setText(String.format("%.2f", total));
@@ -98,16 +81,11 @@ public class CurrentOrderController {
             return;
         }
 
-        // Remove from lists
-        currentOrderItems.remove(selectedIndex);
-        itemPrices.remove(selectedIndex);
+        Order currentOrder = DataManager.getInstance().getCurrentOrder();
+        MenuItem itemToRemove = currentOrder.getItems().get(selectedIndex);
+        currentOrder.remove(itemToRemove);
 
-        // TODO: Remove from Person A's Order class
-        // Order.removeItem(selectedIndex);
-
-        // Update totals
-        updateTotals();
-
+        refreshOrder();
         showAlert("Item removed from order.");
     }
 
@@ -116,7 +94,9 @@ public class CurrentOrderController {
      */
     @FXML
     private void handlePlaceOrder() {
-        if (currentOrderItems.isEmpty()) {
+        Order currentOrder = DataManager.getInstance().getCurrentOrder();
+
+        if (currentOrder.getItems().isEmpty()) {
             showAlert("Your order is empty! Please add items before placing an order.");
             return;
         }
@@ -128,19 +108,12 @@ public class CurrentOrderController {
         confirmation.setContentText("Place order with total: $" + totalField.getText() + "?");
 
         if (confirmation.showAndWait().get() == ButtonType.OK) {
-            // TODO: Add order to Person A's StoreOrders class
-            // StoreOrders.addOrder(currentOrder);
+            DataManager.getInstance().placeCurrentOrder();
 
-            showAlert("Order placed successfully!\nTotal: $" + totalField.getText());
+            showAlert("Order placed successfully!\nOrder #" + currentOrder.getOrderNumber() +
+                    "\nTotal: $" + String.format("%.2f", currentOrder.getTotal()));
 
-            // Clear current order
-            currentOrderItems.clear();
-            itemPrices.clear();
-
-            // TODO: Clear Person A's Order class
-            // Order.clear();
-
-            updateTotals();
+            refreshOrder();
         }
     }
 

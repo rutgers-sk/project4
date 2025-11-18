@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import rucafe.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -230,6 +230,7 @@ public class DonutController {
     /**
      * Handle Add to Order button - adds selected donuts to main order
      */
+
     @FXML
     private void handleAddToOrder() {
         if (selectedDonuts.isEmpty()) {
@@ -237,14 +238,62 @@ public class DonutController {
             return;
         }
 
-        // TODO: Create Donut objects and add to Order
-        // This will depend on Person A's implementation
+        // Add each selected donut to the order
+        for (String item : selectedDonuts) {
+            // Parse the item string
+            String typeStr = extractType(item);
+            String flavorStr = extractFlavor(item);
+            int quantity = extractQuantity(item);
+
+            // Convert to enums
+            DonutType type = parseDonutType(typeStr);
+            DonutFlavor flavor = parseDonutFlavor(flavorStr);
+
+            // Create donut and add to order
+            Donut donut = new Donut(type, flavor, quantity);
+            DataManager.getInstance().getCurrentOrder().add(donut);
+        }
 
         showAlert("Donuts added to order!\nSubtotal: $" + subTotalField.getText());
 
         // Clear the selection
         selectedDonuts.clear();
         updateSubtotal();
+    }
+
+    /**
+     * Extract flavor from item string (first part before parenthesis)
+     */
+    private String extractFlavor(String item) {
+        int parenIndex = item.indexOf("(");
+        if (parenIndex > 0) {
+            return item.substring(0, parenIndex).trim();
+        }
+        return "";
+    }
+
+    /**
+     * Parse DonutType from string
+     */
+    private DonutType parseDonutType(String typeStr) {
+        if (typeStr.contains("Yeast")) return DonutType.YEAST;
+        if (typeStr.contains("Cake")) return DonutType.CAKE;
+        if (typeStr.contains("Hole")) return DonutType.HOLE;
+        if (typeStr.contains("Seasonal")) return DonutType.SEASONAL;
+        return DonutType.YEAST;
+    }
+
+    /**
+     * Parse DonutFlavor from string
+     */
+    private DonutFlavor parseDonutFlavor(String flavorStr) {
+        String lower = flavorStr.toLowerCase();
+        if (lower.contains("glazed")) return DonutFlavor.GLAZED;
+        if (lower.contains("chocolate")) return DonutFlavor.CHOCOLATE;
+        if (lower.contains("strawberry")) return DonutFlavor.STRAWBERRY;
+        if (lower.contains("jelly") || lower.contains("lemon") || lower.contains("boston")) return DonutFlavor.JELLY;
+        if (lower.contains("powder") || lower.contains("sugar")) return DonutFlavor.POWDERED;
+        return DonutFlavor.GLAZED;
     }
 
     /**
