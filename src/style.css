@@ -1,0 +1,13 @@
+
+.block {
+    -fx-background-color: black;
+    -fx-background-radius: 16;
+}
+
+.block:hover {
+    -fx-background-color: #3b82f6; /* nice blue */
+}
+
+.block-label {
+    -fx-text-fill: white;
+}

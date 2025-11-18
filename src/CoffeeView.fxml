@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml">
+
+    <top>
+        <Label text="Coffee"
+               style="-fx-font-size:28px;
+                      -fx-font-weight:bold;
+                      -fx-padding:14;
+                      -fx-background-color:black;
+                      -fx-text-fill:white;"/>
+    </top>
+
+    <center>
+        <Label text="Coffee screen TODO" style="-fx-font-size:16px;"/>
+    </center>
+
+</BorderPane>
