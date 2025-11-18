@@ -45,7 +45,7 @@
             <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" spacing="10">
                 <Spinner fx:id="qtySpinner" prefWidth="80" editable="false"/>
                 <Button fx:id="btnAddOne" text=">" prefWidth="80"/>
-                <Button fx:id="btnAddAll" text=">>" prefWidth="80"/>
+                <Button fx:id="btnAddAll" text="Add All" prefWidth="80"/>
                 <Button fx:id="btnRemove" text="&lt;&lt;" prefWidth="80"/>
             </VBox>
 
