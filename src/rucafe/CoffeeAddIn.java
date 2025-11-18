@@ -4,9 +4,9 @@ package rucafe;
  * Add-ins that can be added to a coffee.
  */
 public enum CoffeeAddIn {
-    CREAM,
-    MILK,
-    SYRUP,
+    WHIPPED_CREAM,
+    VANILLA,
+    TWO_PERCENT_MILK,
     CARAMEL,
-    WHIPPED_CREAM
+    MOCHA
 }

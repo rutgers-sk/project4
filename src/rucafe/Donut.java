@@ -11,10 +11,10 @@ public class Donut extends MenuItem {
     private DonutType type;
     private DonutFlavor flavor;
 
-    // ====== 타입별 기본 가격 (pdf 보고 정확히 수정!!) ======
-    private static final double YEAST_PRICE = 1.59;
-    private static final double CAKE_PRICE = 1.79;
+    private static final double YEAST_PRICE = 1.99;
+    private static final double CAKE_PRICE = 2.19;
     private static final double HOLE_PRICE = 0.39;
+    private static final double SEASONAL_PRICE = 2.49;
 
     /**
      * Constructs a Donut with given type, flavor, and quantity.
@@ -82,6 +82,9 @@ public class Donut extends MenuItem {
                 break;
             case HOLE:
                 base = HOLE_PRICE;
+                break;
+            case SEASONAL:
+                base = SEASONAL_PRICE;
                 break;
             default:
                 base = YEAST_PRICE;

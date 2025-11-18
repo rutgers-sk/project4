@@ -5,7 +5,9 @@ import java.util.List;
 
 /**
  * Represents a sandwich menu item with bread, protein, extras, and quantity.
- * Price is determined by base sandwich price and number of extras.
+ * The base price depends on the protein, and each extra topping adds cost.
+ *
+ * The final price is (base + extras) * quantity.
  *
  * @author Sunghyun Kim
  */
@@ -15,21 +17,38 @@ public class Sandwich extends MenuItem implements Customizable {
     private Protein protein;
     private final List<SandwichExtra> extras;
 
-    private static final double BASE_PRICE = 6.99;
-    private static final double EXTRA_PRICE = 0.99;
+    // base price per protein
+    private static final double BEEF_PRICE    = 12.99;
+    private static final double CHICKEN_PRICE = 10.99;
+    private static final double SALMON_PRICE  = 14.99;
+
+    // extra prices
+    private static final double VEGGIE_PRICE = 0.30; // lettuce, tomatoes, onions
+    private static final double CHEESE_PRICE = 1.00;
 
     /**
-     * Constructs a Sandwich with given bread, protein, extras, and quantity.
+     * Constructs a Sandwich with given bread, protein and quantity.
+     * Extras list is initially empty.
      *
      * @param bread    bread type
      * @param protein  protein choice
-     * @param quantity quantity
+     * @param quantity quantity of this sandwich
      */
     public Sandwich(Bread bread, Protein protein, int quantity) {
         super(quantity);
         this.bread = bread;
         this.protein = protein;
         this.extras = new ArrayList<>();
+    }
+
+    /**
+     * Constructs a Sandwich with quantity 1.
+     *
+     * @param bread   bread type
+     * @param protein protein choice
+     */
+    public Sandwich(Bread bread, Protein protein) {
+        this(bread, protein, 1);
     }
 
     /**
@@ -110,23 +129,69 @@ public class Sandwich extends MenuItem implements Customizable {
     }
 
     /**
-     * Computes the total price of the sandwich based on base price,
-     * number of extras, and quantity.
+     * Computes the base price based on the selected protein.
+     *
+     * @return base price for a single sandwich
+     */
+    private double getBasePrice() {
+        switch (protein) {
+            case BEEF:
+                return BEEF_PRICE;
+            case CHICKEN:
+                return CHICKEN_PRICE;
+            case SALMON:
+                return SALMON_PRICE;
+            default:
+                return 0.0;
+        }
+    }
+
+    /**
+     * Computes the extra price based on selected extras.
+     *
+     * @return total extras price for a single sandwich
+     */
+    private double getExtrasPrice() {
+        double total = 0.0;
+        for (SandwichExtra extra : extras) {
+            if (extra == SandwichExtra.CHEESE) {
+                total += CHEESE_PRICE;
+            } else { // LETTUCE, TOMATOES, ONIONS
+                total += VEGGIE_PRICE;
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Computes the total price of the sandwich:
+     * (base price + extras price) * quantity.
      *
      * @return total price
      */
     @Override
     public double price() {
-        double single = BASE_PRICE + (extras.size() * EXTRA_PRICE);
+        double single = getBasePrice() + getExtrasPrice();
         return single * getQuantity();
     }
 
+    /**
+     * String representation including bread, protein, extras, and quantity.
+     *
+     * @return formatted sandwich description
+     */
     @Override
     public String toString() {
         return "Sandwich (" + bread + ", " + protein
                 + ", extras=" + extras + ", qty=" + getQuantity() + ")";
     }
 
+    /**
+     * Two sandwiches are equal if they have same bread, protein, and extras set.
+     *
+     * @param obj object to compare
+     * @return true if logically equal, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Sandwich)) {

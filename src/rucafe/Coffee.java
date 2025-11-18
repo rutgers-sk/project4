@@ -14,12 +14,12 @@ public class Coffee extends MenuItem implements Customizable {
     private CupSize size;
     private final List<CoffeeAddIn> addIns;
 
-    private static final double SHORT_PRICE = 1.89;
-    private static final double TALL_PRICE = 2.29;
-    private static final double GRANDE_PRICE = 2.69;
-    private static final double VENTI_PRICE = 3.09;
+    private static final double SHORT_PRICE  = 2.39;
+    private static final double TALL_PRICE   = SHORT_PRICE + 0.60;
+    private static final double GRANDE_PRICE = TALL_PRICE + 0.60;
+    private static final double VENTI_PRICE  = GRANDE_PRICE + 0.60;
 
-    private static final double ADD_IN_PRICE = 0.30;
+    private static final double ADD_IN_PRICE = 0.25;
 
     /**
      * Constructs a Coffee with given size and quantity.

@@ -6,5 +6,6 @@ package rucafe;
 public enum DonutType {
     YEAST,
     CAKE,
-    HOLE
+    HOLE,
+    SEASONAL
 }
