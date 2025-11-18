@@ -16,21 +16,21 @@
         <VBox spacing="15" style="-fx-padding: 20;">
 
             <HBox spacing="20" alignment="CENTER_LEFT">
-                <ComboBox fx:id="orderNumberCombo" prefWidth="150" promptText="Select Order"/>
+                <ComboBox fx:id="comboBox" prefWidth="150" promptText="Select Order"/>
                 <Label text="Total Amount" style="-fx-font-size: 14px;"/>
-                <TextField fx:id="totalAmountField" text="0.00" editable="false" prefWidth="150" style="-fx-font-size: 14px;"/>
+                <TextField fx:id="total" text="0.00" editable="false" prefWidth="150" style="-fx-font-size: 14px;"/>
             </HBox>
 
-            <ListView fx:id="orderDetailsListView" prefHeight="300" style="-fx-font-size: 13px;"/>
+            <ListView fx:id="listView" prefHeight="300" style="-fx-font-size: 13px;"/>
 
         </VBox>
     </center>
 
     <bottom>
         <HBox spacing="20" alignment="CENTER" style="-fx-background-color: #f0f0f0; -fx-padding: 20;">
-            <Button fx:id="btnCancelOrder" text="Cancel Order" prefWidth="150" style="-fx-background-color: #b3f5b3; -fx-font-size: 14px;"/>
-            <Button fx:id="btnExportOrders" text="Export Orders" prefWidth="150" style="-fx-background-color: #b3f5b3; -fx-font-size: 14px;"/>
-            <Button fx:id="btnMainMenu" text="Main Menu" prefWidth="150" style="-fx-background-color: #66ff66; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Button fx:id="cancel" text="Cancel Order" prefWidth="150" style="-fx-background-color: #b3f5b3; -fx-font-size: 14px;"/>
+            <Button fx:id="export" text="Export Orders" prefWidth="150" style="-fx-background-color: #b3f5b3; -fx-font-size: 14px;"/>
+            <Button fx:id="back" text="Main Menu" prefWidth="150" style="-fx-background-color: #66ff66; -fx-font-size: 14px; -fx-font-weight: bold;"/>
         </HBox>
     </bottom>
 
