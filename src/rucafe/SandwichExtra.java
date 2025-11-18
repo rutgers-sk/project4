@@ -6,8 +6,6 @@ package rucafe;
 public enum SandwichExtra {
     CHEESE,
     LETTUCE,
-    TOMATO,
-    ONION,
-    PEPPERS,
-    AVOCADO
+    TOMATOES,
+    ONIONS
 }

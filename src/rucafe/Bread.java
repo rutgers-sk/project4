@@ -4,7 +4,7 @@ package rucafe;
  * Types of bread for sandwiches.
  */
 public enum Bread {
-    WHITE,
+    BAGEL,
     WHEAT,
     SOURDOUGH
 }
